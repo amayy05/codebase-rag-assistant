@@ -17,3 +17,21 @@ chroma_db/
 .env
 .env.*
 !.env.example
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Local vector database
+chroma_db/
+
+# Cloned repositories
+repos/
+
+# Environment secrets
+.env
+.env.*
+
+# Generated dependency graphs
+dependency_graph_*.png

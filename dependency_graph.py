@@ -49,7 +49,6 @@ for node in ast.walk(tree):
             if isinstance(child, ast.Call):
 
                 if isinstance(child.func, ast.Name):
-
                     dependencies.append(child.func.id)
 
         dependency_map[function_name] = dependencies
@@ -60,7 +59,7 @@ for node in ast.walk(tree):
 # --------------------------------------------------
 
 print("FUNCTION DEPENDENCY MAP")
-print("-" * 40)
+print("-" * 45)
 
 for function, dependencies in dependency_map.items():
 
@@ -76,11 +75,9 @@ visited = set()
 
 def trace_dependencies(function):
 
-    # Stop if function was already visited
     if function in visited:
         return
 
-    # Remember visited function
     visited.add(function)
 
     dependencies = dependency_map.get(function, [])
@@ -92,18 +89,14 @@ def trace_dependencies(function):
         trace_dependencies(dependency)
 
 
-# --------------------------------------------------
-# 6. Start tracing
-# --------------------------------------------------
-
 print("\nTRANSITIVE DEPENDENCIES")
-print("-" * 40)
+print("-" * 45)
 
 trace_dependencies("calculate_total")
 
 
 # --------------------------------------------------
-# 7. Count only internal dependencies
+# 6. Count internal dependencies
 # --------------------------------------------------
 
 internal_dependencies = visited.intersection(
@@ -116,12 +109,48 @@ print("\nTOTAL INTERNAL DEPENDENCIES:", len(internal_dependencies))
 
 
 # --------------------------------------------------
-# 8. Display internal dependencies
+# 7. Display internal dependency list
 # --------------------------------------------------
 
 print("\nINTERNAL DEPENDENCY LIST")
-print("-" * 40)
+print("-" * 45)
 
 for dependency in sorted(internal_dependencies):
 
     print("-", dependency)
+
+
+# --------------------------------------------------
+# 8. Generate clean dependency tree
+# --------------------------------------------------
+
+def print_dependency_tree(function, visited=None, level=0):
+
+    if visited is None:
+        visited = set()
+
+    if function in visited:
+        return
+
+    visited.add(function)
+
+    print("  " * level + function)
+
+    dependencies = dependency_map.get(function, [])
+
+    for dependency in dependencies:
+
+        # Include only functions defined in our code
+        if dependency in dependency_map:
+
+            print_dependency_tree(
+                dependency,
+                visited,
+                level + 1
+            )
+
+
+print("\nCLEAN DEPENDENCY TREE")
+print("-" * 45)
+
+print_dependency_tree("calculate_total")
